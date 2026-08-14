@@ -4,7 +4,7 @@ import {
   TypeOfTraining,
   Workout,
   WorkoutCategory,
-} from './constants';
+} from './constants.ts';
 
 export async function updateWorkout(
   supabase: any,
