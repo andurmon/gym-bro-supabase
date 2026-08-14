@@ -16,9 +16,8 @@ interface Workout {
   id?: string;
   name: string;
   description?: string | null;
-  exercises_json?: unknown | null;
   category?: string | null;
-  type_of_training?: string | null;
+  typeOfTraining?: string | null;
 }
 
 enum WorkoutCategory {

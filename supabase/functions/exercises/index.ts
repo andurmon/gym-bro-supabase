@@ -78,18 +78,26 @@ async function getExercises(req: Request): Promise<Response> {
     .from(TABLE_NAME)
     .select(
       `
-      id,
-      created_at,
-      name,
-      muscle_group_id,
-      equipment_id,
-      description,
-      instructions,
-      max_weight,
-      ideal_weight,
-      image_url,
-      video_url,
-      details_url
+        id,
+        created_at,
+        name,
+        muscle_group_id,
+        equipment_id,
+        description,
+        instructions,
+        max_weight,
+        ideal_weight,
+        image_url,
+        video_url,
+        details_url,
+        muscle_groups (
+            id,
+            name
+        ),
+        equipment (
+            id,
+            name
+        )
     `
     )
     .order('name', { ascending: true });
