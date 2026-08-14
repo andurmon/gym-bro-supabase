@@ -146,9 +146,9 @@ async function createWorkout(req: Request): Promise<Response> {
   }
 
   if (
-    body.type_of_training &&
+    body.typeOfTraining &&
     !Object.values(TypeOfTraining).includes(
-      body.type_of_training as TypeOfTraining
+      body.typeOfTraining as TypeOfTraining
     )
   ) {
     return response({ error: 'Invalid type of training' }, 400);
@@ -157,9 +157,8 @@ async function createWorkout(req: Request): Promise<Response> {
   const workout = {
     name: body.name.trim(),
     description: body.description ?? null,
-    exercises_json: body.exercises_json ?? null,
     category: body.category ?? null,
-    type_of_training: body.type_of_training ?? null,
+    type_of_training: body.typeOfTraining ?? null,
   };
 
   const { data, error } = await supabase
@@ -200,13 +199,12 @@ async function updateWorkout(req: Request, id: string): Promise<Response> {
   const allowedFields: (keyof Workout)[] = [
     'name',
     'description',
-    'exercises_json',
     'category',
-    'type_of_training',
+    'typeOfTraining',
   ];
 
   for (const field of allowedFields) {
-    if (body[field] !== undefined) {
+    if (body[field] !== undefined && body[field] !== null) {
       updates[field] = body[field];
     }
   }
@@ -223,9 +221,9 @@ async function updateWorkout(req: Request, id: string): Promise<Response> {
   }
 
   if (
-    body.type_of_training &&
+    body.typeOfTraining &&
     !Object.values(TypeOfTraining).includes(
-      body.type_of_training as TypeOfTraining
+      body.typeOfTraining as TypeOfTraining
     )
   ) {
     return response({ error: 'Invalid type of training' }, 400);
@@ -270,7 +268,7 @@ async function deleteWorkout(id: string): Promise<Response> {
   });
 }
 
-Deno.serve(async req => {
+Deno.serve(async (req: any) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', {
       headers: corsHeaders,
