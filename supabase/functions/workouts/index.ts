@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { getWorkouts } from './getWorkouts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,7 +21,6 @@ interface Workout {
   typeOfTraining?: string | null;
 }
 
-//TODO Replace this with a query to the actual table
 enum WorkoutCategory {
   Strength = 'strength',
   Cardio = 'cardio',
@@ -53,40 +53,6 @@ function getWorkoutId(req: Request): string | null {
 }
 
 const TABLE_NAME = 'workouts';
-
-async function getWorkouts(req: Request): Promise<Response> {
-  const url = new URL(req.url);
-
-  const search = url.searchParams.get('search');
-  const category = url.searchParams.get('category');
-  const typeOfTraining = url.searchParams.get('typeOfTraining');
-
-  let query = supabase
-    .from(TABLE_NAME)
-    .select(`id, created_at, name, description, category, type_of_training`)
-    .order('name', { ascending: true });
-
-  if (search) {
-    query = query.ilike('name', `%${search}%`);
-  }
-
-  if (category) {
-    query = query.eq('category', category);
-  }
-
-  if (typeOfTraining) {
-    query = query.eq('type_of_training', typeOfTraining);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error(error);
-    return response({ error: 'Failed to retrieve workouts' }, 500);
-  }
-
-  return response(data);
-}
 
 async function getWorkout(id: string): Promise<Response> {
   const { data, error } = await supabase
