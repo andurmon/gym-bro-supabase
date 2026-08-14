@@ -20,6 +20,7 @@ interface Workout {
   typeOfTraining?: string | null;
 }
 
+//TODO Replace this with a query to the actual table
 enum WorkoutCategory {
   Strength = 'strength',
   Cardio = 'cardio',
@@ -58,21 +59,11 @@ async function getWorkouts(req: Request): Promise<Response> {
 
   const search = url.searchParams.get('search');
   const category = url.searchParams.get('category');
-  const typeOfTraining = url.searchParams.get('type_of_training');
+  const typeOfTraining = url.searchParams.get('typeOfTraining');
 
   let query = supabase
     .from(TABLE_NAME)
-    .select(
-      `
-      id,
-      created_at,
-      name,
-      description,
-      exercises_json,
-      category,
-      type_of_training
-    `
-    )
+    .select(`id, created_at, name, description, category, type_of_training`)
     .order('name', { ascending: true });
 
   if (search) {
@@ -100,17 +91,7 @@ async function getWorkouts(req: Request): Promise<Response> {
 async function getWorkout(id: string): Promise<Response> {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .select(
-      `
-      id,
-      created_at,
-      name,
-      description,
-      exercises_json,
-      category,
-      type_of_training
-    `
-    )
+    .select(`id, created_at, name, description, category, type_of_training`)
     .eq('id', id)
     .single();
 
@@ -164,17 +145,7 @@ async function createWorkout(req: Request): Promise<Response> {
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .insert(workout)
-    .select(
-      `
-        id,
-        created_at,
-        name,
-        description,
-        exercises_json,
-        category,
-        type_of_training
-        `
-    )
+    .select(`id, created_at, name, description, category, type_of_training`)
     .single();
 
   if (error) {
@@ -237,9 +208,7 @@ async function updateWorkout(req: Request, id: string): Promise<Response> {
     .from(TABLE_NAME)
     .update(updates)
     .eq('id', id)
-    .select(
-      `id, created_at, name, description, exercises_json, category, type_of_training`
-    )
+    .select(`id, created_at, name, description, category, type_of_training`)
     .single();
 
   if (error) {
