@@ -1,0 +1,46 @@
+name: Deploy Supabase Edge Functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/functions/**'
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link Supabase project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+      - name: Deploy all Edge Functions
+        run: |
+          for dir in supabase/functions/*/; do
+            function_name=$(basename "$dir")
+
+            # Skip shared/helper folders (e.g. _shared) - these aren't deployable functions
+            if [[ "$function_name" == _* ]]; then
+              echo "Skipping non-function directory: $function_name"
+              continue
+            fi
+
+            echo "Deploying function: $function_name"
+            supabase functions deploy "$function_name" \
+              --project-ref "$SUPABASE_PROJECT_ID"
+          done
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
