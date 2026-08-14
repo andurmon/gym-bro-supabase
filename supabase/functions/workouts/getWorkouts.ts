@@ -1,9 +1,12 @@
 /**
- *
+ * @param supabase
  * @param req
  * @returns
  */
-export async function getWorkouts(req: Request): Promise<Response> {
+export async function getWorkouts(
+  supabase: any,
+  req: Request
+): Promise<Response> {
   const url = new URL(req.url);
 
   const search = url.searchParams.get('search');

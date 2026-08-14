@@ -54,7 +54,7 @@ function getWorkoutId(req: Request): string | null {
 
 const TABLE_NAME = 'workouts';
 
-async function getWorkout(id: string): Promise<Response> {
+async function getWorkout(supabase: any, id: string): Promise<Response> {
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .select(`id, created_at, name, description, category, type_of_training`)
@@ -74,7 +74,7 @@ async function getWorkout(id: string): Promise<Response> {
   return response(data);
 }
 
-async function createWorkout(req: Request): Promise<Response> {
+async function createWorkout(supabase: any, req: Request): Promise<Response> {
   let body: Workout;
 
   try {
@@ -122,7 +122,11 @@ async function createWorkout(req: Request): Promise<Response> {
   return response(data, 201);
 }
 
-async function updateWorkout(req: Request, id: string): Promise<Response> {
+async function updateWorkout(
+  supabase: any,
+  req: Request,
+  id: string
+): Promise<Response> {
   let body: Partial<Workout>;
 
   try {
@@ -190,7 +194,7 @@ async function updateWorkout(req: Request, id: string): Promise<Response> {
   return response(data);
 }
 
-async function deleteWorkout(id: string): Promise<Response> {
+async function deleteWorkout(supabase: any, id: string): Promise<Response> {
   const { error } = await supabase.from(TABLE_NAME).delete().eq('id', id);
 
   if (error) {
@@ -215,31 +219,26 @@ Deno.serve(async (req: any) => {
 
     switch (req.method) {
       case 'GET':
-        return id ? await getWorkout(id) : await getWorkouts(req);
+        return id
+          ? await getWorkout(supabase, id)
+          : await getWorkouts(supabase, req);
 
       case 'POST':
-        return await createWorkout(req);
+        return await createWorkout(supabase, req);
 
       case 'PUT':
-        if (!id) {
-          return response({ error: 'Workout ID is required' }, 400);
-        }
-
-        return await updateWorkout(req, id);
+        if (!id) return response({ error: 'Workout ID is required' }, 400);
+        return await updateWorkout(supabase, req, id);
 
       case 'DELETE':
-        if (!id) {
-          return response({ error: 'Workout ID is required' }, 400);
-        }
-
-        return await deleteWorkout(id);
+        if (!id) return response({ error: 'Workout ID is required' }, 400);
+        return await deleteWorkout(supabase, id);
 
       default:
         return response({ error: 'Method not allowed' }, 405);
     }
   } catch (error) {
     console.error(error);
-
     return response({ error: 'Internal server error' }, 500);
   }
 });
