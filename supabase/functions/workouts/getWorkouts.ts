@@ -1,3 +1,5 @@
+const TABLE_NAME = 'workouts';
+
 /**
  * @param supabase
  * @param req
