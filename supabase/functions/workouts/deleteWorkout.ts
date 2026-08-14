@@ -1,5 +1,5 @@
-import { response } from '../_shared/utils';
-import { TABLE_NAME } from './constants';
+import { response } from '../_shared/utils.ts';
+import { TABLE_NAME } from './constants.ts';
 
 /**
  *

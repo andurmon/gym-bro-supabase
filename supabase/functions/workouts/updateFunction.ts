@@ -1,4 +1,4 @@
-import { response } from '../_shared/utils';
+import { response } from '../_shared/utils.ts';
 import {
   TABLE_NAME,
   TypeOfTraining,
