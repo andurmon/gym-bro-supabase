@@ -18,6 +18,7 @@ export async function getExercise(
       id,
       created_at,
       name,
+      key,
       muscle_group_id,
       equipment_id,
       description,

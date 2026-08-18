@@ -25,6 +25,7 @@ export async function createExercise(
 
   const exercise = {
     name: body.name.trim(),
+    key: body.key.trim(),
     muscle_group_id: body.muscleGroupId ?? null,
     equipment_id: body.equipmentId ?? null,
     description: body.description ?? null,
@@ -44,6 +45,7 @@ export async function createExercise(
       id,
       created_at,
       name,
+      key,
       muscle_group_id,
       equipment_id,
       description,

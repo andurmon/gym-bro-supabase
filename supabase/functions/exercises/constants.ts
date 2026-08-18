@@ -13,6 +13,7 @@ export function getExerciseId(req: Request): string | null {
 export interface Exercise {
   id?: string;
   name: string;
+  key: string;
   muscleGroupId?: string | null;
   muscleGroups?: any;
   equipmentId?: string | null;
@@ -31,6 +32,7 @@ export const TABLE_NAME = 'exercises';
 export const mapExercise = (exercise: any): Exercise => ({
   id: exercise?.id,
   name: exercise?.name,
+  key: exercise?.key,
   muscleGroupId: exercise?.muscle_group_id,
   muscleGroups: exercise?.muscle_groups,
   equipmentId: exercise?.equipment_id,

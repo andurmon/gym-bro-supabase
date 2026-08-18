@@ -24,6 +24,7 @@ export async function getExercises(
         id,
         created_at,
         name,
+        key,
         muscle_group_id,
         equipment_id,
         description,
@@ -35,11 +36,13 @@ export async function getExercises(
         details_url,
         muscle_groups (
             id,
-            name
+            name, 
+            key
         ),
         equipment (
             id,
-            name
+            name, 
+            key
         )
     `
     )

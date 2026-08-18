@@ -2,6 +2,12 @@ import { response } from '../_shared/utils.ts';
 
 const TABLE_NAME = 'muscle_groups';
 
+/**
+ *
+ * @param supabase
+ * @param req
+ * @returns
+ */
 export async function getMuscleGroups(
   supabase: any,
   req: Request
@@ -11,7 +17,7 @@ export async function getMuscleGroups(
 
   let query = supabase
     .from(TABLE_NAME)
-    .select('id, created_at, name')
+    .select('id, created_at, name, key')
     .order('name', { ascending: true });
 
   if (search) {

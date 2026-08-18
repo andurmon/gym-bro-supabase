@@ -5,14 +5,18 @@ CREATE TABLE public.muscle_groups (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   name text,
+  key text,
   CONSTRAINT muscle_groups_pkey PRIMARY KEY (id)
 );
+
 CREATE TABLE public.equipment (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   name text,
+  key text,
   CONSTRAINT equipment_pkey PRIMARY KEY (id)
 );
+
 CREATE TABLE public.exercises (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   created_at timestamp with time zone NOT NULL DEFAULT now(),
@@ -26,6 +30,7 @@ CREATE TABLE public.exercises (
   image_url character varying,
   video_url character varying,
   details_url character varying,
+  key text,
   CONSTRAINT exercises_pkey PRIMARY KEY (id),
   CONSTRAINT exercises_equipment_fkey FOREIGN KEY (equipment_id) REFERENCES public.equipment(id),
   CONSTRAINT exercises_muscle_group_fkey FOREIGN KEY (muscle_group_id) REFERENCES public.muscle_groups(id)
@@ -38,6 +43,7 @@ CREATE TABLE public.workouts (
   description text,
   category character varying,
   type_of_training character varying,
+  key text,
   CONSTRAINT workouts_pkey PRIMARY KEY (id)
 );
 
@@ -67,6 +73,7 @@ CREATE TABLE public.routine (
   friday uuid,
   saturday uuid,
   sunday uuid,
+  key text,
   CONSTRAINT routine_pkey PRIMARY KEY (id),
   CONSTRAINT fk_routine_monday FOREIGN KEY (monday) REFERENCES public.workouts(id),
   CONSTRAINT fk_routine_tuesday FOREIGN KEY (tuesday) REFERENCES public.workouts(id),
@@ -77,18 +84,17 @@ CREATE TABLE public.routine (
   CONSTRAINT fk_routine_sunday FOREIGN KEY (sunday) REFERENCES public.workouts(id)
 );
 
+INSERT INTO public.equipment (name, type) VALUES ('body-weight', 'body-weight');
+INSERT INTO public.equipment (name, type) VALUES ('dumbells', 'dumbells');
+INSERT INTO public.equipment (name, type) VALUES ('machine', 'machine');
+INSERT INTO public.equipment (name, type) VALUES ('bands', 'bands');
 
-INSERT INTO public.equipment (name) VALUES ('body-weight');
-INSERT INTO public.equipment (name) VALUES ('dumbells');
-INSERT INTO public.equipment (name) VALUES ('machine');
-INSERT INTO public.equipment (name) VALUES ('bands');
-
-INSERT INTO public.muscle_groups (name) VALUES ('chest');
-INSERT INTO public.muscle_groups (name) VALUES ('back');
-INSERT INTO public.muscle_groups (name) VALUES ('shoulder');
-INSERT INTO public.muscle_groups (name) VALUES ('legs');
-INSERT INTO public.muscle_groups (name) VALUES ('glutes');
-INSERT INTO public.muscle_groups (name) VALUES ('biceps');
-INSERT INTO public.muscle_groups (name) VALUES ('tricpes');
-INSERT INTO public.muscle_groups (name) VALUES ('forearms');
-INSERT INTO public.muscle_groups (name) VALUES ('abs');
+INSERT INTO public.muscle_groups (name, type) VALUES ('chest', 'chest');
+INSERT INTO public.muscle_groups (name, type) VALUES ('back', 'back');
+INSERT INTO public.muscle_groups (name, type) VALUES ('shoulder', 'shoulder');
+INSERT INTO public.muscle_groups (name, type) VALUES ('legs', 'legs');
+INSERT INTO public.muscle_groups (name, type) VALUES ('glutes', 'glutes');
+INSERT INTO public.muscle_groups (name, type) VALUES ('biceps', 'biceps');
+INSERT INTO public.muscle_groups (name, type) VALUES ('tricpes', 'tricpes');
+INSERT INTO public.muscle_groups (name, type) VALUES ('forearms', 'forearms');
+INSERT INTO public.muscle_groups (name, type) VALUES ('abs', 'abs');

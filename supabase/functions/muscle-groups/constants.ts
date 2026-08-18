@@ -8,6 +8,7 @@ export function getMuscleGroupId(req: Request): string | null {
 export interface MuscleGroup {
   id?: string;
   name: string;
+  key: string;
 }
 
 export const TABLE_NAME = 'muscle_groups';

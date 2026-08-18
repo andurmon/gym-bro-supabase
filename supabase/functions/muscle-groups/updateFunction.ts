@@ -1,6 +1,13 @@
 import { response } from '../_shared/utils.ts';
 import { MuscleGroup, TABLE_NAME } from './constants.ts';
 
+/**
+ *
+ * @param supabase
+ * @param req
+ * @param id
+ * @returns
+ */
 export async function updateMuscleGroup(
   supabase: any,
   req: Request,
@@ -16,7 +23,7 @@ export async function updateMuscleGroup(
 
   const updates: Partial<MuscleGroup> = {};
 
-  const allowedFields: (keyof MuscleGroup)[] = ['name'];
+  const allowedFields: (keyof MuscleGroup)[] = ['name', 'key'];
 
   for (const field of allowedFields) {
     if (body[field] !== undefined && body[field] !== null) {
@@ -36,7 +43,7 @@ export async function updateMuscleGroup(
     .from(TABLE_NAME)
     .update(updates)
     .eq('id', id)
-    .select('id, created_at, name')
+    .select('id, created_at, name, key')
     .single();
 
   if (error) {

@@ -25,6 +25,7 @@ export async function updateExercise(
 
   const allowedFields: (keyof Exercise)[] = [
     'name',
+    'key',
     'muscleGroupId',
     'equipmentId',
     'description',
@@ -59,6 +60,7 @@ export async function updateExercise(
       id,
       created_at,
       name,
+      key,
       muscle_group_id,
       equipment_id,
       description,

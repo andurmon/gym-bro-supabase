@@ -1,6 +1,12 @@
 import { response } from '../_shared/utils.ts';
 import { MuscleGroup, TABLE_NAME } from './constants.ts';
 
+/**
+ *
+ * @param supabase
+ * @param req
+ * @returns
+ */
 export async function createMuscleGroup(
   supabase: any,
   req: Request
@@ -24,7 +30,7 @@ export async function createMuscleGroup(
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .insert(muscleGroup)
-    .select('id, created_at, name')
+    .select('id, created_at, name, key')
     .single();
 
   if (error) {
