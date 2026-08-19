@@ -7,7 +7,7 @@ import { getExerciseId } from './constants.ts';
 import { getExercise } from './getExercise.ts';
 import { getExercises } from './getExercises.ts';
 import { createExercise } from './createExercise.ts';
-import { updateExercise } from './updateFunction.ts';
+import { updateExercise } from './updateExercise.ts';
 import { deleteExercise } from './deleteExercise.ts';
 
 const supabase = createClient(

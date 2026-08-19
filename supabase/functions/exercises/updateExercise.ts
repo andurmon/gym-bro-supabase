@@ -51,6 +51,20 @@ export async function updateExercise(
     updates.name = updates.name.trim();
   }
 
+  const exercise_update = {
+    name: updates.name.trim(),
+    key: updates.key.trim(),
+    muscle_group_id: updates.muscleGroupId ?? null,
+    equipment_id: updates.equipmentId ?? null,
+    description: updates.description ?? null,
+    instructions: updates.instructions ?? null,
+    max_weight: updates.maxWeight ?? null,
+    ideal_weight: updates.idealWeight ?? null,
+    image_url: updates.imageUrl ?? null,
+    video_url: updates.videoUrl ?? null,
+    details_url: updates.detailsUrl ?? null,
+  };
+
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .update(updates)

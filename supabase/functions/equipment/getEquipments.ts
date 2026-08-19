@@ -10,7 +10,7 @@ export async function getEquipments(
 
   let query = supabase
     .from(TABLE_NAME)
-    .select('id, created_at, name')
+    .select('id, created_at, name, key')
     .order('name', { ascending: true });
 
   if (search) {
