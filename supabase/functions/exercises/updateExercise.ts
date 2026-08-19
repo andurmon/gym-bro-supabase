@@ -67,7 +67,7 @@ export async function updateExercise(
 
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .update(updates)
+    .update(exercise_update)
     .eq('id', id)
     .select(
       `
