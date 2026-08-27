@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'jsr:@supabase/supabase-js@2/cors';
+import { updateExercise } from './updateExercise';
 
 // WASM ImageMagick (supports many formats, including WebP)
 import {
@@ -27,7 +28,6 @@ function jsonResponse(data: unknown, init: ResponseInit = {}) {
 }
 
 Deno.serve(async (req: Request) => {
-  console.log('req: ', req);
   if (req.method === 'OPTIONS')
     return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'PUT')
@@ -68,7 +68,6 @@ Deno.serve(async (req: Request) => {
       ? `${objectPrefix}/${fileName}.webp`
       : `${fileName}.webp`;
 
-    console.log('objectPath: ', objectPath);
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     if (!supabaseUrl) throw new Error('SUPABASE_URL is required');
 
@@ -112,6 +111,11 @@ Deno.serve(async (req: Request) => {
         contentType: 'image/webp',
         upsert: true,
       });
+    console.log('STORAGE ata: ', data);
+    const { publicURL, error } = supabase.storage
+      .from('public-bucket')
+      .getPublicUrl('folder/avatar1.png');
+    console.log('STORAGE publicURL: ', publicURL);
 
     if (error) {
       return jsonResponse(
@@ -119,7 +123,9 @@ Deno.serve(async (req: Request) => {
         { status: 500, headers: corsHeaders }
       );
     }
-
+    const id = form.get('id');
+    const updtResponse = await updateExercise(id, data.path);
+    console.log('updtResponse: ', updtResponse);
     return jsonResponse(
       {
         bucket: 'exercises_library',
