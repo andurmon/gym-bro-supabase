@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'jsr:@supabase/supabase-js@2/cors';
-import { updateExercise } from './updateExercise';
+import { updateExercise } from './updateExercise.ts';
 
 // WASM ImageMagick (supports many formats, including WebP)
 import {
