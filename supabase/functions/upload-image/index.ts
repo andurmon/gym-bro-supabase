@@ -54,6 +54,9 @@ Deno.serve(async (req: Request) => {
       );
     }
     const fileName = file?.name ?? 'upload.bin';
+    console.log('fileName: ', fileName);
+    const name = fileName?.split('.')?.[0];
+    console.log('name: ', name);
 
     const requestedPath = form.get('path')?.toString().trim();
 
@@ -65,8 +68,8 @@ Deno.serve(async (req: Request) => {
         : '';
 
     const objectPath = objectPrefix
-      ? `${objectPrefix}/${fileName}.webp`
-      : `${fileName}.webp`;
+      ? `${objectPrefix}/${name}.webp`
+      : `${name}.webp`;
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     if (!supabaseUrl) throw new Error('SUPABASE_URL is required');
@@ -122,9 +125,11 @@ Deno.serve(async (req: Request) => {
     const id = form.get('id');
     console.log('id: ', id);
     if (id) {
-      const { publicURL, publicURLError } = await supabaseAdmin.storage
+      const { data: publicData, publicURLError } = supabaseAdmin.storage
         .from('exercises_library')
         .getPublicUrl(data.path);
+      console.log('publicData: ', publicData);
+      const publicURL = publicData?.publicUrl;
       console.log('publicURL: ', publicURL);
 
       if (publicURLError) {
