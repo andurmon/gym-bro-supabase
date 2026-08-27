@@ -55,14 +55,16 @@ Deno.serve(async (req: Request) => {
     }
 
     const filenameFromClient = (
-      form.get('filename')?.toString() ??
-      file.name ??
+      form.get('fileName')?.toString() ??
+      file?.name ??
       'upload.bin'
     ).trim();
+    console.log('filenameFromClient: ', filenameFromClient);
 
     const sanitizedBaseName = filenameFromClient
       .replace(/[^a-zA-Z0-9._-]/g, '_')
       .replace(/\.[a-zA-Z0-9]+$/, ''); // remove extension if present
+    console.log('sanitizedBaseName: ', sanitizedBaseName);
 
     const requestedPath = form.get('path')?.toString().trim();
 
@@ -77,6 +79,7 @@ Deno.serve(async (req: Request) => {
       ? `${objectPrefix}/${sanitizedBaseName}.webp`
       : `${sanitizedBaseName}.webp`;
 
+    console.log('objectPath: ', objectPath);
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     if (!supabaseUrl) throw new Error('SUPABASE_URL is required');
 
