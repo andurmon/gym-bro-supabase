@@ -124,8 +124,11 @@ Deno.serve(async (req: Request) => {
       );
     }
     const id = form.get('id');
-    const updtResponse = await updateExercise(id, data.path);
-    console.log('updtResponse: ', updtResponse);
+    console.log('id: ', id);
+    if (id) {
+      const updtResponse = await updateExercise(id, data.path);
+      console.log('updtResponse: ', updtResponse);
+    }
     return jsonResponse(
       {
         bucket: 'exercises_library',
