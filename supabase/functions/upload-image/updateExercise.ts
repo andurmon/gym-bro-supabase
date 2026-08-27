@@ -8,8 +8,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
  * @returns
  */
 export async function updateExercise(
-    id: string,
-    imagePath: string,
+  id: string,
+  imagePath: string
 ): Promise<any> {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -21,7 +21,7 @@ export async function updateExercise(
   };
 
   const { data, error } = await supabase
-    .from("exercises")
+    .from('exercises')
     .update(exercise_update)
     .eq('id', id)
     .select(
@@ -45,12 +45,12 @@ export async function updateExercise(
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return {{ error: 'Exercise not found' }, status: 404};
+      return { error: 'Exercise not found', status: 404 };
     }
 
     console.error(error);
 
-    return {{ error: 'Failed to update exercise' }, status: 500};
+    return { error: 'Failed to update exercise', status: 500 };
   }
 
   return data;
