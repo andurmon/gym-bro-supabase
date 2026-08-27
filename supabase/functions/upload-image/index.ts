@@ -1,6 +1,21 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'jsr:@supabase/supabase-js@2/cors';
 
+// WASM ImageMagick (supports many formats, including WebP)
+import {
+  ImageMagick,
+  initializeImageMagick,
+} from 'npm:@imagemagick/magick-wasm@0.0.30';
+
+// Initialize ImageMagick once per instance
+const wasmBytes = await Deno.readFile(
+  new URL(
+    'magick.wasm',
+    import.meta.resolve('npm:@imagemagick/magick-wasm@0.0.30')
+  )
+);
+await initializeImageMagick(wasmBytes);
+
 function jsonResponse(data: unknown, init: ResponseInit = {}) {
   return new Response(JSON.stringify(data), {
     ...init,
@@ -12,14 +27,16 @@ function jsonResponse(data: unknown, init: ResponseInit = {}) {
 }
 
 Deno.serve(async (req: Request) => {
+  console.log('req: ', req);
   if (req.method === 'OPTIONS')
     return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'PUT')
+    return new Response(
+      { error: `Not Found ${req.method} - /upload-image` },
+      { status: 404, headers: corsHeaders }
+    );
 
   try {
-    // Expect multipart/form-data with fields:
-    // - file: the image Blob/File
-    // - path: optional object path (defaults to provided name)
-    // - filename: optional original filename
     const contentType = req.headers.get('content-type') ?? '';
     if (!contentType.includes('multipart/form-data')) {
       return jsonResponse(
@@ -42,27 +59,32 @@ Deno.serve(async (req: Request) => {
       file.name ??
       'upload.bin'
     ).trim();
-    const sanitizedFilename = filenameFromClient.replace(
-      /[^a-zA-Z0-9._-]/g,
-      '_'
-    );
 
-    // Since you asked for `root`, default to bucket root.
-    // If the client provides `path`, we respect it (still sanitized).
+    const sanitizedBaseName = filenameFromClient
+      .replace(/[^a-zA-Z0-9._-]/g, '_')
+      .replace(/\.[a-zA-Z0-9]+$/, ''); // remove extension if present
+
     const requestedPath = form.get('path')?.toString().trim();
-    const objectPath =
+
+    // If client provides "path", we treat it as a folder prefix (like "avatars/user123")
+    // and we output "avatars/user123/<base>.webp"
+    const objectPrefix =
       requestedPath && requestedPath.length > 0
-        ? requestedPath.replace(/\s+/g, '_')
-        : sanitizedFilename;
+        ? requestedPath.replace(/\s+/g, '_').replace(/\/+$/g, '')
+        : '';
+
+    const objectPath = objectPrefix
+      ? `${objectPrefix}/${sanitizedBaseName}.webp`
+      : `${sanitizedBaseName}.webp`;
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     if (!supabaseUrl) throw new Error('SUPABASE_URL is required');
 
     const rawSecrets = Deno.env.get('SUPABASE_SECRET_KEYS');
     if (!rawSecrets) throw new Error('SUPABASE_SECRET_KEYS is required');
-    const secretKeys = JSON.parse(rawSecrets);
 
-    const secretKey = secretKeys['default_scret_key'];
+    const secretKeys = JSON.parse(rawSecrets);
+    const secretKey = secretKeys['default_scret_key']; // keep your existing key name logic
     if (!secretKey) {
       return jsonResponse(
         {
@@ -75,13 +97,27 @@ Deno.serve(async (req: Request) => {
 
     const supabaseAdmin = createClient(supabaseUrl, secretKey);
 
-    const bucket = 'exercises_library';
-    const uploadContentType = file.type || 'application/octet-stream';
+    // ---- Convert to WebP with ImageMagick WASM ----
+    const inputBytes = new Uint8Array(await file.arrayBuffer());
 
+    const webpBytes = ImageMagick.read(inputBytes, img => {
+      // You can tweak quality (0-100). WebP quality controls compression quality.
+      // img.quality(80) exists in ImageMagick; support depends on underlying build.
+      // If your build doesn’t support `quality`, remove that line.
+      try {
+        // @ts-expect-error - quality method may not be in types
+        img.quality(80);
+      } catch {}
+
+      // Ensure output is written as webp
+      return img.write((data: Uint8Array) => data);
+    });
+
+    // ---- Upload converted bytes to Storage ----
     const { data, error } = await supabaseAdmin.storage
-      .from(bucket)
-      .upload(objectPath, file, {
-        contentType: uploadContentType,
+      .from('exercises_library')
+      .upload(objectPath, webpBytes, {
+        contentType: 'image/webp',
         upsert: true,
       });
 
@@ -94,9 +130,9 @@ Deno.serve(async (req: Request) => {
 
     return jsonResponse(
       {
-        bucket,
+        bucket: 'exercises_library',
         path: data.path,
-        contentType: uploadContentType,
+        contentType: 'image/webp',
       },
       { status: 200, headers: corsHeaders }
     );
