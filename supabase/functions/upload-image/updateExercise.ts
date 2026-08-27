@@ -8,7 +8,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
  * @returns
  */
 export async function updateExercise(
-    id: string
+    id: string,
     imagePath: string,
 ): Promise<any> {
   const supabase = createClient(
