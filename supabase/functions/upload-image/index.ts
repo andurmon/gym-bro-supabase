@@ -112,7 +112,7 @@ Deno.serve(async (req: Request) => {
         upsert: true,
       });
     console.log('STORAGE ata: ', data);
-    const { publicURL } = supabase.storage
+    const { publicURL } = supabaseAdmin.storage
       .from('public-bucket')
       .getPublicUrl('folder/avatar1.png');
     console.log('STORAGE publicURL: ', publicURL);
