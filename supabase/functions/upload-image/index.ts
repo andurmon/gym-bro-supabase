@@ -112,10 +112,6 @@ Deno.serve(async (req: Request) => {
         upsert: true,
       });
     console.log('STORAGE ata: ', data);
-    const { publicURL } = supabaseAdmin.storage
-      .from('public-bucket')
-      .getPublicUrl('folder/avatar1.png');
-    console.log('STORAGE publicURL: ', publicURL);
 
     if (error) {
       return jsonResponse(
@@ -126,7 +122,19 @@ Deno.serve(async (req: Request) => {
     const id = form.get('id');
     console.log('id: ', id);
     if (id) {
-      const updtResponse = await updateExercise(id, data.path);
+      const { publicURL, publicURLError } = supabaseAdmin.storage
+        .from('exercises_library')
+        .getPublicUrl(data.path);
+
+      if (publicURLError) {
+        console.error('publicURLError: ', publicURLError);
+        return jsonResponse(
+          { error: error.message ?? String(error) },
+          { status: 500, headers: corsHeaders }
+        );
+      }
+      console.log('STORAGE publicURL: ', publicURL);
+      const updtResponse = await updateExercise(id, publicURL);
       console.log('updtResponse: ', updtResponse);
     }
     return jsonResponse(
