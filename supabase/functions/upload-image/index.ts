@@ -122,9 +122,10 @@ Deno.serve(async (req: Request) => {
     const id = form.get('id');
     console.log('id: ', id);
     if (id) {
-      const { publicURL, publicURLError } = supabaseAdmin.storage
+      const { publicURL, publicURLError } = await supabaseAdmin.storage
         .from('exercises_library')
         .getPublicUrl(data.path);
+      console.log('publicURL: ', publicURL);
 
       if (publicURLError) {
         console.error('publicURLError: ', publicURLError);
