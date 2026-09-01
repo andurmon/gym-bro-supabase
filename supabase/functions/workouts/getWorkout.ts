@@ -10,7 +10,29 @@ const TABLE_NAME = 'workouts';
 export async function getWorkout(supabase: any, id: string): Promise<Response> {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .select(`id, created_at, name, description, category, type_of_training`)
+    .select(
+      `id,
+        name,
+        description,
+        category,
+        type_of_training,
+        key,
+        created_at,
+        workout_exercise (
+            id,
+            sets,
+            reps,
+            workout_sequence_id,
+            exercises (
+                id,
+                name,
+                description,
+                image_url,
+                muscle_group_id,
+                equipment_id
+            )
+        )`
+    )
     .eq('id', id)
     .single();
 

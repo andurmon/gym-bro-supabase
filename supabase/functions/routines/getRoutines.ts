@@ -21,14 +21,6 @@ export async function getRoutines(
         created_at,
         name,
         monday, 
-        exercises (
-            id,
-            name,
-            description,
-            image_url,
-            muscle_group_id,
-            equipment_id
-        ),
         tuesday,
         wednesday,
         thursday,
