@@ -29,7 +29,10 @@ export async function getWorkout(supabase: any, id: string): Promise<Response> {
                 description,
                 image_url,
                 muscle_group_id,
-                equipment_id
+                equipment_id,
+                muscle_groups (
+                    id,
+                    name)
             )
         )`
     )
