@@ -20,13 +20,13 @@ export async function getRoutines(
       `id,
         created_at,
         name,
-        monday, 
-        tuesday,
-        wednesday,
-        thursday,
-        friday,
-        saturday,
-        sunday,
+        monday(id, name, category, type_of_training),
+        tuesday(id, name, category, type_of_training),
+        wednesday(id, name, category, type_of_training),
+        thursday(id, name, category, type_of_training),
+        friday(id, name, category, type_of_training),
+        saturday(id, name, category, type_of_training),
+        sunday(id, name, category, type_of_training),
         key`
     )
     .order('name', { ascending: true });
